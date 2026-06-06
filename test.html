@@ -1,0 +1,46 @@
+<!DOCTYPE html>
+<html lang="tr">
+
+<head>
+    <meta charset="UTF-8">
+    <title>README Görüntüleyici</title>
+    <script src="https://cdn.jsdelivr.net/npm/marked/marked.min.js"></script>
+    <style>
+        body {
+            font-family: sans-serif;
+            line-height: 1.6;
+            padding: 40px;
+            max-width: 800px;
+            margin: auto;
+        }
+
+        #content {
+            border: 1px solid #ddd;
+            padding: 20px;
+            border-radius: 8px;
+        }
+    </style>
+</head>
+
+<body>
+
+    <div id="content">Yükleniyor...</div>
+
+    <script>
+        // README.md dosyasının yolu
+        const readmePath = 'README.md';
+
+        fetch(readmePath)
+            .then(response => response.text())
+            .then(markdownText => {
+                // Markdown'ı HTML'e çevir ve ekrana bas
+                document.getElementById('content').innerHTML = marked.parse(markdownText);
+            })
+            .catch(err => {
+                document.getElementById('content').innerHTML = "Dosya yüklenirken bir hata oluştu.";
+                console.error(err);
+            });
+    </script>
+</body>
+
+</html>
