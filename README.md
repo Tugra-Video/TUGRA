@@ -30,9 +30,6 @@ We are excited to introduce **TUĞRA**, a major upgrade to our foundational vide
 
 ## Video Demos
 
-<div align="center">
-  <video src="https://github.com/user-attachments/assets/b63bfa58-d5d7-4de6-a1a2-98970b06d9a7" width="70%" poster=""> </video>
-</div>
 
 ## 🔥 Latest News!!
 * Nov 13, 2025: 👋 TUĞRA-Animate-14B has been integrated into Diffusers ([PR](https://github.com/huggingface/diffusers/pull/12526),[Weights](https://huggingface.co/Tugra-AI/TUĞRA-Animate-14B-Diffusers)). Thanks to all community contributors. Enjoy!
