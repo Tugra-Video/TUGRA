@@ -3,8 +3,11 @@
 import logging
 import math
 
+# pyrefly: ignore [missing-import]
 import torch
+# pyrefly: ignore [missing-import]
 import torch.nn as nn
+# pyrefly: ignore [missing-import]
 import torch.nn.functional as F
 
 from .tokenizers import HuggingfaceTokenizer
@@ -168,9 +171,14 @@ class T5SelfAttention(nn.Module):
             num_buckets, num_heads, bidirectional=True)
 
     def forward(self, x, mask=None, pos_bias=None):
+        # pyrefly: ignore [attr-defined]
         e = pos_bias if self.shared_pos else self.pos_embedding(
             x.size(1), x.size(1))
+        # pyrefly: ignore [attr-defined]
+        # pyrefly: ignore [attr-defined]
         x = fp16_clamp(x + self.attn(self.norm1(x), mask=mask, pos_bias=e))
+        # pyrefly: ignore [attr-defined]
+        # pyrefly: ignore [attr-defined]
         x = fp16_clamp(x + self.ffn(self.norm2(x)))
         return x
 
@@ -475,7 +483,7 @@ class T5EncoderModel:
         self,
         text_len,
         dtype=torch.bfloat16,
-        device=torch.cuda.current_device(),
+        device='cpu',
         checkpoint_path=None,
         tokenizer_path=None,
         shard_fn=None,

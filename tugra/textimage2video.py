@@ -12,16 +12,32 @@ from functools import partial
 import torch
 import torch.cuda.amp as amp
 import torch.distributed as dist
-import torchvision.transforms.functional as TF
+try:
+    import torchvision.transforms.functional as TF
+    _has_torchvision = True
+except Exception:
+    _has_torchvision = False
+    import numpy as np
+    class _TFFallback:
+        @staticmethod
+        def to_tensor(img):
+            # Convert PIL Image to torch tensor in [0,1] range
+            arr = np.array(img)
+            # Ensure shape is H x W x C
+            if arr.ndim == 2:
+                arr = arr[:, :, None]
+            tensor = torch.from_numpy(arr).permute(2, 0, 1).float() / 255.0
+            return tensor
+    TF = _TFFallback
 from PIL import Image
 from tqdm import tqdm
 
 from .distributed.fsdp import shard_model
 from .distributed.sequence_parallel import sp_attn_forward, sp_dit_forward
 from .distributed.util import get_world_size
-from .modules.model import TugraModel
+from .modules.model import WanModel as TugraModel
 from .modules.t5 import T5EncoderModel
-from .modules.vae2_2 import Tugra2_2_VAE
+from .modules.vae2_2 import Wan2_2_VAE as Tugra2_2_VAE
 from .utils.fm_solvers import (
     FlowDPMSolverMultistepScheduler,
     get_sampling_sigmas,

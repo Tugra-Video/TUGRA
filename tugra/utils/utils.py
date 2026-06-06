@@ -6,10 +6,28 @@ import os
 import os.path as osp
 import shutil
 import subprocess
-
+# pyrefly: ignore [missing-import]
 import imageio
+# pyrefly: ignore [missing-import]
 import torch
-import torchvision
+try:
+    # pyrefly: ignore [missing-import]
+    import torchvision
+    _has_torchvision = True
+except Exception:
+    _has_torchvision = False
+    # Minimal make_grid fallback
+    def _make_grid(tensor, nrow=8, normalize=True, value_range=(-1, 1)):
+        # Simple grid: reshape and concatenate
+        B, C, H, W = tensor.shape
+        rows = B // nrow if nrow else 1
+        # reshape to (rows, nrow, C, H, W)
+        grid = tensor.view(rows, nrow, C, H, W).permute(2, 0, 1, 3, 4)
+        grid = grid.reshape(C, rows * H, nrow * W)
+        if normalize:
+            minv, maxv = value_range
+            grid = (grid - minv) / (maxv - minv)
+        return grid
 
 __all__ = ['save_video', 'save_image', 'str2bool']
 
@@ -103,7 +121,7 @@ def save_video(tensor,
         # preprocess
         tensor = tensor.clamp(min(value_range), max(value_range))
         tensor = torch.stack([
-            torchvision.utils.make_grid(
+            (torchvision.utils.make_grid if _has_torchvision else _make_grid)(
                 u, nrow=nrow, normalize=normalize, value_range=value_range)
             for u in tensor.unbind(2)
         ],
@@ -226,13 +244,16 @@ def best_output_size(w, h, dw, dh, expected_area):
 
 
 def download_cosyvoice_repo(repo_path):
+    # pyrefly: ignore [missing-import]
     try:
-        import git
+        # pyrefly: ignore [missing-import]
+        import git  
     except ImportError:
         raise ImportError('failed to import git, please run pip install GitPython')
     repo = git.Repo.clone_from('https://github.com/FunAudioLLM/CosyVoice.git', repo_path, multi_options=['--recursive'], branch='main')
 
 
 def download_cosyvoice_model(model_name, model_path):
+    # pyrefly: ignore [missing-import]
     from modelscope import snapshot_download
     snapshot_download('iic/{}'.format(model_name), local_dir=model_path)

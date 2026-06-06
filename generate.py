@@ -10,8 +10,11 @@ warnings.filterwarnings('ignore')
 
 import random
 
+# pyrefly: ignore [missing-import]
 import torch
+# pyrefly: ignore [missing-import]
 import torch.distributed as dist
+# pyrefly: ignore [missing-import]
 from PIL import Image
 
 import tugra
